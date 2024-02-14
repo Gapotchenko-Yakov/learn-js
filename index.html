@@ -6,36 +6,28 @@
   </head>
   <body>
     <script>
-      function loadScript(src, callback) {
-        const script = document.createElement("script");
-        script.src = src;
+      function loadScript(src) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
 
-        script.onload = () => callback(null, script);
-        script.onerror = () =>
-          callback(new Error("Произошла ошибка при загрузке скрипта!"));
+          script.onload = () => resolve(script);
+          script.onerror = () =>
+            reject(new Error("Произошла ошибка при загрузке скрипта!"));
 
-        document.head.append(script);
+          document.head.append(script);
+        });
       }
 
-      loadScript("1.js", (error, script) => {
-        if (error) {
-          handleError(error);
-        } else {
-          loadScript("2.js", (error, script) => {
-            if (error) {
-              handleError(error);
-            } else {
-              loadScript("3.js", (error, script) => {
-                if (error) {
-                  handleError(error);
-                } else {
-                  console.log("using all scripts together...");
-                }
-              });
-            }
-          });
-        }
-      });
+      loadScript("1.js")
+        .then((script) => loadScript("2.js"))
+        .then((script) => loadScript("3.js"))
+        .then((script) => {
+          f1();
+          f2();
+          f3();
+          f44();
+        });
     </script>
   </body>
 </html>
